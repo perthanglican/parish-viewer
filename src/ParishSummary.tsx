@@ -23,9 +23,9 @@ function Parish({ parish }: { parish: ParishDefinition }) {
         <h2 className="mt-4">{parish.name}</h2>
         <table className="table">
             <tbody>
-                <tr><th scope="row">Code</th><td>{parish.code}</td></tr>
-                <tr><th scope="row">Definition</th><td><PreField lines={parish.definition}/></td></tr>
-                <tr><th scope="row">Problems</th><td><PreField lines={parish.problems}/></td></tr>
+                <tr><th className="w-25" scope="row">Code</th><td>{parish.code}</td></tr>
+                <tr><th className="w-25" scope="row">Definition</th><td><PreField lines={parish.definition}/></td></tr>
+                <tr><th className="w-25" scope="row">Problems</th><td><PreField lines={parish.problems}/></td></tr>
             </tbody>
         </table>
     </Col></Row>
