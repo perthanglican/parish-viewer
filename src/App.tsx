@@ -20,7 +20,7 @@ function LinkBar() {
 
     return <ButtonToolbar>
         <ActiveButton active={atMap} to="/">Map</ActiveButton>
-        <ActiveButton active={atSummary} to="/summary">Summary</ActiveButton>
+        <ActiveButton active={atSummary} to="/summary">Listing</ActiveButton>
     </ButtonToolbar>;
 }
 

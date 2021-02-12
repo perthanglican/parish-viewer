@@ -86,9 +86,6 @@ function ParishMap() {
         var gj = new GeoJSON();
         // spool in the parishes
         for (const parish of Parishes.parishes) {
-            if (!parish.geom) {
-                continue;
-            }
             const feature = gj.readFeature(parish.geom, importOptions);
             const style = ParishStyle(parish);
             feature.setStyle(style);
