@@ -13,10 +13,24 @@ import * as olProj from 'ol/proj';
 import VectorSource from 'ol/source/Vector';
 import XYZ from 'ol/source/XYZ';
 
+import { crc32 } from './crc32';
+import { hslToRgb } from './hsl2rgb';
+
+// this approach taken from monotone-viz
+function StringToRGBA(str: string): number[] {
+    const check = crc32(str);
+
+    const h = check / 4294967296;
+    const l = 0.55;
+    const s = 0.8;
+
+    return [...hslToRgb(h, s, l), 0.5];
+}
+
 function ParishStyle(parish: any) {
     const style = new Style({
         fill: new Fill({
-            color: [255, 0, 0, 0.5],
+            color: StringToRGBA(parish.code),
         }),
         stroke: new Stroke({
             color: [0, 0, 0, 1],
@@ -35,28 +49,22 @@ function ParishStyle(parish: any) {
 
 
 function ParishMap({ showSummary, setShowSummary }: { showSummary: boolean, setShowSummary: any }) {
-    const StGeorges = olProj.transform([115.8612, -31.9557], 'EPSG:4326', 'EPSG:3857');
-    const [map, setMap] = React.useState<Map>()
-
     // get ref to div element - OpenLayers will render into this div
     const mapElement = React.useRef<HTMLDivElement>(null);
 
     React.useEffect(() => {
-        if (map) {
-            return;
-        }
-
-        const initialFeaturesLayer = new VectorLayer({
+        const StGeorges = olProj.transform([115.8612, -31.9557], 'EPSG:4326', 'EPSG:3857');
+        const featuresLayer = new VectorLayer({
             source: undefined,
         })
 
-        const initialView = new View({
+        const viewObject = new View({
             projection: 'EPSG:3857',
             center: StGeorges,
             zoom: 10
         });
 
-        const initialMap = new Map({
+        const mapObject = new Map({
             target: mapElement.current || undefined,
             layers: [
                 new TileLayer({
@@ -64,9 +72,9 @@ function ParishMap({ showSummary, setShowSummary }: { showSummary: boolean, setS
                         url: 'http://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}',
                     })
                 }),
-                initialFeaturesLayer
+                featuresLayer
             ],
-            view: initialView,
+            view: viewObject,
             controls: []
         });
 
@@ -87,14 +95,18 @@ function ParishMap({ showSummary, setShowSummary }: { showSummary: boolean, setS
             style.getText().setText(parish.code);
             features = [...features, feature];
         }
+        mapObject.setTarget(mapElement.current || undefined);
         const parishSource = new VectorSource({
             features: features
         });
-        initialFeaturesLayer.setSource(parishSource);
+        featuresLayer.setSource(parishSource);
 
         // save map and vector layer references to state
-        setMap(initialMap);
-    }, [StGeorges, map])
+        return () => {
+            console.log('unmounted');
+            mapObject.setTarget(undefined);
+        } ;
+    });
 
     return (
         <div ref={mapElement} className="map-container"></div>
