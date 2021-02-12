@@ -48,7 +48,7 @@ function ParishStyle(parish: any) {
 }
 
 
-function ParishMap({ showSummary, setShowSummary }: { showSummary: boolean, setShowSummary: any }) {
+function ParishMap() {
     // get ref to div element - OpenLayers will render into this div
     const mapElement = React.useRef<HTMLDivElement>(null);
 
