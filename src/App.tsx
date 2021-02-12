@@ -4,15 +4,15 @@ import { Navbar, NavbarBrand, Button, Badge, ButtonToolbar } from 'reactstrap';
 import { ParishMap } from './ParishMap';
 import { ParishSummary } from './ParishSummary';
 import { HashRouter, Route, useLocation, Link } from 'react-router-dom';
-import Parishes from './parishes.json';
+import { Parishes } from './ParishInfo';
 
 function LinkBar() {
     const location = useLocation();
     const atSummary = location.pathname === '/summary';
     const atMap = location.pathname === '/';
 
-    const ActiveButton = ({active, children, to} : {active: Boolean, children: any, to: string}) => {
-        return <Button 
+    const ActiveButton = ({ active, children, to }: { active: Boolean, children: any, to: string }) => {
+        return <Button
             className={active ? 'active' : undefined}
             tag={Link}
             to={to}>{children}</Button>
@@ -26,20 +26,19 @@ function LinkBar() {
 
 function TopBar() {
     return <Navbar className="fixed-top" color="dark" dark>
-        <NavbarBrand>Anglican Church Diocese of Perth: Digitised Boundaries <Badge>{ Parishes.parishes.length }</Badge></NavbarBrand>
+        <NavbarBrand>Anglican Church Diocese of Perth: Digitised Boundaries <Badge>{Parishes.parishes.length}</Badge></NavbarBrand>
         <LinkBar />
     </Navbar>;
 }
-
 
 function App() {
     return <>
         <HashRouter>
             <TopBar />
-            <Route path="/" exact render={(props) => 
+            <Route path="/" exact render={(props) =>
                 <ParishMap />
             } />
-            <Route path="/summary" exact render={(props) => 
+            <Route path="/summary" exact render={(props) =>
                 <ParishSummary />
             } />
         </HashRouter>

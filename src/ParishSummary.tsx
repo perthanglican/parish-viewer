@@ -1,14 +1,6 @@
 import React from 'react';
 import { Container, Row, Col } from 'reactstrap';
-import Parishes from './parishes.json';
-
-interface ParishDefinition {
-    code: string;
-    name: string;
-    definition: string[];
-    problems: string[];
-    geom: string;
-};
+import { ParishDefinition, Parishes } from './ParishInfo';
 
 function PreField({lines}: {lines: string[]}) {
     const ll = lines.map((l) => <div>{l}<br/></div>);

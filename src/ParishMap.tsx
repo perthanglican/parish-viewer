@@ -1,5 +1,6 @@
 import React from 'react';
-import Parishes from './parishes.json';
+import { Parishes } from './ParishInfo';
+import Select from 'ol/interaction/Select';
 
 import Map from 'ol/Map';
 import View from 'ol/View';
@@ -9,6 +10,7 @@ import Feature from 'ol/Feature';
 import Geometry from 'ol/geom/Geometry';
 import GeoJSON from 'ol/format/GeoJSON';
 import { Style, Text, Fill, Stroke } from 'ol/style';
+import { click } from 'ol/events/condition';
 import * as olProj from 'ol/proj';
 import VectorSource from 'ol/source/Vector';
 import XYZ from 'ol/source/XYZ';
@@ -47,6 +49,11 @@ function ParishStyle(parish: any) {
     return style;
 }
 
+function ParishPopover() {
+    return <>
+        <div id="map-info"><div id="map-info-inner"><p>Click on a parish for more information.</p></div></div>
+    </>;
+}
 
 function ParishMap() {
     // get ref to div element - OpenLayers will render into this div
@@ -85,10 +92,11 @@ function ParishMap() {
         }
         var gj = new GeoJSON();
         // spool in the parishes
-        for (const parish of Parishes.parishes) {
+        for (const [idx, parish] of Parishes.parishes.entries()) {
             const feature = gj.readFeature(parish.geom, importOptions);
             const style = ParishStyle(parish);
             feature.setStyle(style);
+            feature.set('parishIndex', idx);
             style.getText().setText(parish.code);
             features = [...features, feature];
         }
@@ -98,16 +106,49 @@ function ParishMap() {
         });
         featuresLayer.setSource(parishSource);
 
+        // select interaction working on "click"
+        const selectClick = new Select({
+            condition: click,
+        });
+
+        mapObject.addInteraction(selectClick);
+        selectClick.on('select', function (e) {
+            var elem = document.getElementById('map-info-inner');
+            if (!elem) {
+                return;
+            }
+            var feature = e.target.getFeatures().item(0);
+            if (feature) {
+                const idx: (number | undefined) = feature.get('parishIndex');
+                if (idx !== undefined) {
+                    const parish = Parishes.parishes[idx];
+                    const definition = parish.definition.join(' ');
+                    const problems = parish.problems.join('');
+                    elem.innerHTML = `
+<table class="table">
+    <tbody>
+        <tr><th class="w-25" scope="row">Code</th><td>${parish.code}</td></tr>
+        <tr><th class="w-25" scope="row">Definition</th><td>${definition}</td></tr>
+        <tr><th class="w-25" scope="row">Problems</th><td>${problems}</td></tr>
+    </tbody>
+</table>`;
+                    return;
+                }
+            }
+            elem.innerHTML = `<p>Click on a parish for more information.</p>`;
+        });
+
         // save map and vector layer references to state
         return () => {
-            console.log('unmounted');
             mapObject.setTarget(undefined);
-        } ;
+        };
     });
 
-    return (
+    return <>
         <div ref={mapElement} className="map-container"></div>
-    )
+        <ParishPopover />
+    </>;
+    
 }
 
 export { ParishMap };
