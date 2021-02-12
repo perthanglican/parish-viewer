@@ -25,7 +25,7 @@ function LinkBar() {
 }
 
 function TopBar() {
-    return <Navbar color="dark" dark>
+    return <Navbar className="fixed-top" color="dark" dark>
         <NavbarBrand>Anglican Church Diocese of Perth: Digitised Boundaries <Badge>{ Parishes.parishes.length }</Badge></NavbarBrand>
         <LinkBar />
     </Navbar>;
