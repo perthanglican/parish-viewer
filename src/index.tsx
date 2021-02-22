@@ -1,3 +1,12 @@
+import 'core-js/es/map';
+import 'core-js/es/set';
+import 'core-js/es/symbol';
+import 'core-js/es/promise';
+import 'core-js/es/symbol/iterator';
+import 'core-js/es/object/assign';
+import 'core-js/es/string/replace-all';
+import 'raf/polyfill'
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
